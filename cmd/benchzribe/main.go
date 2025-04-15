@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 	"time"
-  
+
 	"github.com/kitd3k/benchzribe/internal/parser"
 	"github.com/kitd3k/benchzribe/internal/readme"
 )
