@@ -7,6 +7,7 @@ import (
 )
 
 func Generate(results []float64, path string) error {
+	//test
 	graph := asciigraph.Plot(results, asciigraph.Caption("Latency (ns/op)"))
 	return os.WriteFile(path, []byte(graph), 0644)
 }
