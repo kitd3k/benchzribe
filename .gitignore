@@ -11,6 +11,7 @@ bench.out
 bench/*.svg
 bench/*.png
 bench/*.json
+!bench/.gitkeep
 
 # Editor files
 .vscode/

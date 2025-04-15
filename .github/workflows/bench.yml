@@ -39,6 +39,6 @@ jobs:
         run: |
           git config user.name "benchzribe-bot"
           git config user.email "bot@benchzribe.io"
-          git add README.md bench/
-          git commit -m "🧪 auto-update benchmark"
-          git push || echo "Nothing to commit"
+          git add README.md bench/ || echo "nothing to add"
+          git commit -m "📈 auto-update benchmark" || echo "no changes to commit"
+          git push || echo "nothing to push"
