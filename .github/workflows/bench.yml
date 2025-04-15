@@ -12,6 +12,7 @@ on:
 jobs:
   benchzribe:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -29,13 +30,13 @@ jobs:
           go test ./internal/benchmarks -bench=. -benchmem > ../bench.out
           cd ..
 
-      - name: Run benchzribe
+      - name: Run benchzribe (parser + readme update)
         run: |
+          go mod tidy
           go run cmd/benchzribe/main.go run
-          go run cmd/benchzribe/main.go graph
-          go run cmd/benchzribe/main.go readme
 
-      - name: Commit benchmark results
+      - name: Commit benchmark results (only if not a fork)
+        if: github.event.pull_request.head.repo.full_name == github.repository
         run: |
           git config user.name "benchzribe-bot"
           git config user.email "bot@benchzribe.io"
