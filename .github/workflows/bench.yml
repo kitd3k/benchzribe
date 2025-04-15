@@ -8,6 +8,13 @@ on:
       - "**/*.go"
       - ".github/workflows/bench.yml"
 
+  push:
+    branches:
+      - main
+    paths:
+      - "**/*.go"
+      - ".github/workflows/bench.yml"
+
 jobs:
   benchzribe:
     runs-on: ubuntu-latest
@@ -34,22 +41,11 @@ jobs:
           go mod tidy
           go run cmd/benchzribe/main.go run
 
-      # Optional: Debug output - uncomment to verify it worked
-      # - name: 🧾 Print README preview
-      #   run: cat README.md
-
-      # Optional: Upload bench.out for debug (skip if causes error)
-      # - name: 📦 Upload bench.out for inspection
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: bench-output
-      #     path: bench.out
-
-      - name: 📄 Force commit README changes
-        if: github.event.pull_request.head.repo.full_name == github.repository
+      - name: 📄 Commit updated README on merge (only on main branch)
+        if: github.ref == 'refs/heads/main'
         run: |
           git config user.name "benchzribe-bot"
           git config user.email "bot@benchzribe.io"
           git add -f README.md bench/ || echo "Nothing to add"
-          git commit -m "📈 auto-update benchmark from CI" || echo "No changes to commit"
+          git commit -m "📈 update README with benchmark after merge" || echo "No changes to commit"
           git push || echo "Nothing to push"
