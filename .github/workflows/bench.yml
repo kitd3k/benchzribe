@@ -23,27 +23,33 @@ jobs:
         with:
           go-version: 1.21
 
-      - name: 🧪 Run Benchmark
+      - name: 🧪 Run Benchmark on Mock API
         run: |
           cd mockapi
           go test ./internal/benchmarks -bench=. -benchmem > ../bench.out
           cd ..
-
-      - name: 📦 Upload bench.out for debug (optional)
-        uses: actions/upload-artifact@v2
-        with:
-          name: bench-output
-          path: bench.out
 
       - name: 🔍 Run benchzribe to update README
         run: |
           go mod tidy
           go run cmd/benchzribe/main.go run
 
-      - name: 📄 Force add README (always update)
+      # Optional: Debug output - uncomment to verify it worked
+      # - name: 🧾 Print README preview
+      #   run: cat README.md
+
+      # Optional: Upload bench.out for debug (skip if causes error)
+      # - name: 📦 Upload bench.out for inspection
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: bench-output
+      #     path: bench.out
+
+      - name: 📄 Force commit README changes
+        if: github.event.pull_request.head.repo.full_name == github.repository
         run: |
           git config user.name "benchzribe-bot"
           git config user.email "bot@benchzribe.io"
-          git add -f README.md bench/
-          git commit -m "📈 force update: latest benchmark results" || echo "no changes to commit"
-          git push || echo "nothing to push"
+          git add -f README.md bench/ || echo "Nothing to add"
+          git commit -m "📈 auto-update benchmark from CI" || echo "No changes to commit"
+          git push || echo "Nothing to push"
