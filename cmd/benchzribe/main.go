@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/kitd3k/benchzribe/internal/parser"
 	"github.com/kitd3k/benchzribe/internal/readme"
@@ -35,7 +36,7 @@ func main() {
 		sb.WriteString("### 📊 Benchmark Results\n\n")
 		sb.WriteString("| Benchmark | ns/op | B/op | allocs/op |\n")
 		sb.WriteString("|-----------|-------|------|------------|\n")
-
+		sb.WriteString("\n_Last updated: " + time.Now().Format(time.RFC1123) + "_\n")
 		for _, r := range results {
 			sb.WriteString(fmt.Sprintf("| %s | %.0f | %d | %d |\n", r.Name, r.NsPerOp, r.BytesPerOp, r.AllocsPerOp))
 		}
