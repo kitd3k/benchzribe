@@ -1,0 +1,44 @@
+name: Benchmark & Update README
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "**/*.go"
+      - "**/README.md"
+      - ".github/workflows/bench.yml"
+
+jobs:
+  benchscribe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.21
+
+      - name: Run mock API benchmark
+        run: |
+          cd mockapi
+          go test ./internal/benchmarks -bench=. -benchmem > ../bench.out
+          cd ..
+
+      - name: Run benchscribe
+        run: |
+          go run cmd/benchscribe/main.go run
+          go run cmd/benchscribe/main.go graph
+          go run cmd/benchscribe/main.go readme
+
+      - name: Commit benchmark results
+        run: |
+          git config user.name "benchscribe-bot"
+          git config user.email "bot@benchscribe.io"
+          git add README.md bench/
+          git commit -m "🧪 auto-update benchmark"
+          git push || echo "Nothing to commit"
