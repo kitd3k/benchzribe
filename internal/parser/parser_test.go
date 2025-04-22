@@ -50,9 +50,11 @@ BenchmarkTest2-8   	     200	   5000000 ns/op	    6789 B/op	      21 allocs/op
 		},
 		{
 			name: "invalid format",
-			input: `invalid
-format
-data`,
+			input: `goos: linux
+goarch: amd64
+pkg: github.com/kitd3k/benchzribe
+BenchmarkInvalid   	invalid format
+`,
 			wantErr: true,
 		},
 	}
