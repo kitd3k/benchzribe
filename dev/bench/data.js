@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1745341043325,
+  "lastUpdate": 1745342222849,
   "repoUrl": "https://github.com/kitd3k/benchzribe",
   "entries": {
     "Go Benchmark": [
@@ -96,6 +96,50 @@ window.BENCHMARK_DATA = {
             "value": 18,
             "unit": "allocs/op",
             "extra": "615904 times\n4 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "kitd3k",
+            "username": "kitd3k"
+          },
+          "committer": {
+            "name": "kitd3k",
+            "username": "kitd3k"
+          },
+          "id": "942ccc3db8c8fb3fe6202179912bff490c6c4b86",
+          "message": "feat: improve CI and benchmark workflows",
+          "timestamp": "2025-04-22T16:56:48Z",
+          "url": "https://github.com/kitd3k/benchzribe/pull/8/commits/942ccc3db8c8fb3fe6202179912bff490c6c4b86"
+        },
+        "date": 1745342222504,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkTestHandler",
+            "value": 2059,
+            "unit": "ns/op\t    5747 B/op\t      18 allocs/op",
+            "extra": "558974 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkTestHandler - ns/op",
+            "value": 2059,
+            "unit": "ns/op",
+            "extra": "558974 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkTestHandler - B/op",
+            "value": 5747,
+            "unit": "B/op",
+            "extra": "558974 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkTestHandler - allocs/op",
+            "value": 18,
+            "unit": "allocs/op",
+            "extra": "558974 times\n4 procs"
           }
         ]
       }
