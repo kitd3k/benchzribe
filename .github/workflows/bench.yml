@@ -1,0 +1,94 @@
+name: Benchmark
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:  # Allow manual triggering
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  benchmark:
+    name: Run Benchmarks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+          cache: true
+
+      - name: Install dependencies
+        run: |
+          go mod download
+          go mod tidy
+          go mod verify
+
+      - name: Build benchzribe
+        run: |
+          go build -v -o benchzribe ./cmd/benchzribe
+
+      - name: Run mockapi benchmarks
+        run: |
+          cd mockapi
+          go test ./internal/benchmarks -bench=. -benchmem > ../bench.out
+          cd ..
+
+      # Create gh-pages branch if it doesn't exist
+      - name: Create gh-pages branch
+        run: |
+          git checkout --orphan gh-pages || git checkout gh-pages
+          git reset --hard
+          git commit --allow-empty -m "Initialize gh-pages branch"
+          git checkout main
+
+      - name: Store benchmark result
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          name: Go Benchmark
+          tool: 'go'
+          output-file-path: bench.out
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          auto-push: true
+          # Show alert with commit comment on detecting possible performance regression
+          alert-threshold: '200%'
+          comment-on-alert: true
+          fail-on-alert: true
+          # Enable Job Summary for easy viewing of results
+          summary-always: true
+          # Configure gh-pages deployment
+          gh-pages-branch: gh-pages
+          benchmark-data-dir-path: dev/bench
+
+      - name: Update README
+        run: |
+          ./benchzribe run
+
+      - name: Generate graph
+        run: |
+          ./benchzribe graph
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results
+          path: |
+            bench.out
+            benchmark-graph.html
+          retention-days: 90
+
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: update benchmark results [skip ci]"
+          file_pattern: "README.md benchmark-graph.html"
+          commit_user_name: "github-actions[bot]"
+          commit_user_email: "github-actions[bot]@users.noreply.github.com"
+          commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
