@@ -1,49 +1,76 @@
-name: Benchmark & Update README
+name: Benchmark
 
 on:
+  push:
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
-    paths:
-      - "**/*.go"
-      - ".github/workflows/bench.yml"
+    branches: [ main ]
+  workflow_dispatch:  # Allow manual triggering
+
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
-  benchzribe:
+  benchmark:
+    name: Run Benchmarks
     runs-on: ubuntu-latest
-
     steps:
-      - name: ✅ Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
         with:
-          submodules: true
+          go-version: '1.21'
+          cache: true
 
-      - name: 🛠 Setup Go
-        uses: actions/setup-go@v4
+      - name: Install dependencies
+        run: |
+          go mod download
+          go mod verify
+
+      - name: Run benchmark
+        run: |
+          go test -bench=. -benchmem ./... > bench.out
+
+      - name: Store benchmark result
+        uses: benchmark-action/github-action-benchmark@v1
         with:
-          go-version: 1.21
+          name: Go Benchmark
+          tool: 'go'
+          output-file-path: bench.out
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          auto-push: true
+          # Show alert with commit comment on detecting possible performance regression
+          alert-threshold: '200%'
+          comment-on-alert: true
+          fail-on-alert: true
+          # Enable Job Summary for easy viewing of results
+          summary-always: true
 
-      - name: 🧪 Run Benchmark
+      - name: Update README
         run: |
-          cd mockapi
-          go test ./internal/benchmarks -bench=. -benchmem > ../bench.out
-          cd ..
+          ./benchzribe run
 
-      - name: 📦 Upload bench.out for debug (optional)
-        uses: actions/upload-artifact@v3
+      - name: Generate graph
+        run: |
+          ./benchzribe graph
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
         with:
-          name: bench-output
-          path: bench.out
+          name: benchmark-results
+          path: |
+            bench.out
+            benchmark-graph.html
+          retention-days: 90
 
-      - name: 🔍 Run benchzribe to update README
-        run: |
-          go mod tidy
-          go run cmd/benchzribe/main.go run
-
-      - name: 📄 Force add README (always update)
-        run: |
-          git config user.name "benchzribe-bot"
-          git config user.email "bot@benchzribe.io"
-          git add -f README.md bench/
-          git commit -m "📈 force update: latest benchmark results" || echo "no changes to commit"
-          git push || echo "nothing to push"
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: update benchmark results [skip ci]"
+          file_pattern: "README.md benchmark-graph.html"
+          commit_user_name: "github-actions[bot]"
+          commit_user_email: "github-actions[bot]@users.noreply.github.com"
+          commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"

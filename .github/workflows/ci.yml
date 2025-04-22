@@ -13,84 +13,89 @@ permissions:
 
 jobs:
   test:
+    name: Test
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Set up Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: '1.21'
-        cache: true
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+          cache: true
 
-    - name: Install dependencies
-      run: |
-        go mod download
-        go mod verify
+      - name: Install dependencies
+        run: |
+          go mod download
+          go mod verify
 
-    - name: Run tests
-      run: go test -v -race -coverprofile=coverage.txt -covermode=atomic ./...
+      - name: Run tests
+        run: go test -v -race -coverprofile=coverage.txt -covermode=atomic ./...
 
-    - name: Upload coverage
-      uses: actions/upload-artifact@v3
-      with:
-        name: coverage
-        path: coverage.txt
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./coverage.txt
+          fail_ci_if_error: true
 
-    - name: Run linter
-      uses: golangci/golangci-lint-action@v3
-      with:
-        version: latest
+      - name: Run linter
+        uses: golangci/golangci-lint-action@v4
+        with:
+          version: latest
 
   build:
+    name: Build
     needs: test
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Set up Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: '1.21'
-        cache: true
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+          cache: true
 
-    - name: Build
-      run: go build -v ./cmd/benchzribe
+      - name: Build binary
+        run: go build -v ./cmd/benchzribe
 
-    - name: Upload binary
-      uses: actions/upload-artifact@v3
-      with:
-        name: benchzribe
-        path: benchzribe
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchzribe
+          path: benchzribe
+          retention-days: 7
 
   release:
+    name: Release
     needs: [test, build]
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
-    
     steps:
-    - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Set up Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: '1.21'
-        cache: true
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+          cache: true
 
-    - name: Build binaries
-      run: |
-        GOOS=linux GOARCH=amd64 go build -o benchzribe-linux-amd64 ./cmd/benchzribe
-        GOOS=windows GOARCH=amd64 go build -o benchzribe-windows-amd64.exe ./cmd/benchzribe
-        GOOS=darwin GOARCH=amd64 go build -o benchzribe-darwin-amd64 ./cmd/benchzribe
+      - name: Build release binaries
+        run: |
+          GOOS=linux GOARCH=amd64 go build -o benchzribe-linux-amd64 ./cmd/benchzribe
+          GOOS=windows GOARCH=amd64 go build -o benchzribe-windows-amd64.exe ./cmd/benchzribe
+          GOOS=darwin GOARCH=amd64 go build -o benchzribe-darwin-amd64 ./cmd/benchzribe
 
-    - name: Create Release
-      uses: softprops/action-gh-release@v1
-      if: startsWith(github.ref, 'refs/tags/')
-      with:
-        files: |
-          benchzribe-linux-amd64
-          benchzribe-windows-amd64.exe
-          benchzribe-darwin-amd64
-        generate_release_notes: true
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            benchzribe-linux-amd64
+            benchzribe-windows-amd64.exe
+            benchzribe-darwin-amd64
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
