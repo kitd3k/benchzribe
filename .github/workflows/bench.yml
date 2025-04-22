@@ -47,6 +47,19 @@ jobs:
           name: bench-output
           path: bench.out
 
+      - name: 📊 Run Benchmark Action
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          tool: 'go'
+          output-file-path: './bench.out'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          auto-push: true
+          gh-pages-branch: 'gh-pages'
+          benchmark-data-dir-path: 'dev/bench'
+          alert-threshold: '200%'
+          fail-on-alert: true
+          alert-comment-cc-users: '@kitd3k'
+
       - name: 🔍 Run benchzribe to update README
         run: |
           go mod tidy
