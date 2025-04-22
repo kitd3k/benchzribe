@@ -8,6 +8,10 @@ on:
       - "**/*.go"
       - ".github/workflows/bench.yml"
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   benchzribe:
     runs-on: ubuntu-latest
@@ -17,6 +21,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           submodules: true
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 🛠 Setup Go
         uses: actions/setup-go@v4
@@ -29,7 +34,7 @@ jobs:
           go test ./internal/benchmarks -bench=. -benchmem > ../bench.out
           cd ..
 
-      - name: 📦 Upload bench.out for debug (optional)
+      - name: 📦 Upload bench.out for debug
         uses: actions/upload-artifact@v3
         with:
           name: bench-output
@@ -40,10 +45,27 @@ jobs:
           go mod tidy
           go run cmd/benchzribe/main.go run
 
-      - name: 📄 Force add README (always update)
+      - name: 📄 Update README with benchmark results
         run: |
           git config user.name "benchzribe-bot"
           git config user.email "bot@benchzribe.io"
-          git add -f README.md bench/
-          git commit -m "📈 force update: latest benchmark results" || echo "no changes to commit"
-          git push || echo "nothing to push"
+          git add README.md
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "📈 Update: Latest benchmark results"
+            git push
+          fi
+        continue-on-error: true
+
+      - name: 🔄 Create Pull Request Comment
+        if: failure()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '❌ Failed to update benchmark results in README. Please check the workflow logs for details.'
+            })
