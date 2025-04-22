@@ -41,7 +41,7 @@ jobs:
           cd ..
 
       - name: 📦 Upload bench.out for debug
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: bench-output
           path: bench.out
@@ -65,7 +65,7 @@ jobs:
         continue-on-error: true
 
       - name: 🔄 Create Pull Request Comment
-        if: failure()
+        if: failure() && github.event_name == 'pull_request'
         uses: actions/github-script@v6
         with:
           script: |
