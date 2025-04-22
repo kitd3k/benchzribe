@@ -7,6 +7,12 @@ on:
     paths:
       - "**/*.go"
       - ".github/workflows/bench.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "**/*.go"
+      - ".github/workflows/bench.yml"
 
 permissions:
   contents: write
@@ -28,7 +34,7 @@ jobs:
         with:
           go-version: 1.21
 
-      - name: 🧪 Run Benchmark
+      - name: 🧪 Run Benchmark on Mock API
         run: |
           cd mockapi
           go test ./internal/benchmarks -bench=. -benchmem > ../bench.out
