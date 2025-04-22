@@ -49,11 +49,12 @@ jobs:
           output-file-path: bench.out
           github-token: ${{ secrets.GITHUB_TOKEN }}
           auto-push: true
-          # Show alert with commit comment on detecting possible performance regression
+          gh-pages-branch: 'gh-pages'
+          benchmark-data-dir-path: 'dev/bench'
           alert-threshold: '200%'
           comment-on-alert: true
           fail-on-alert: true
-          # Enable Job Summary for easy viewing of results
+          alert-comment-cc-users: '@kitd3k'
           summary-always: true
 
       - name: Update README
