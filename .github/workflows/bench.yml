@@ -1,95 +1,87 @@
-name: Benchmark & Update README
+name: Benchmark
 
 on:
-  pull_request:
-    branches:
-      - main
-    paths:
-      - "**/*.go"
-      - ".github/workflows/bench.yml"
   push:
-    branches:
-      - main
-    paths:
-      - "**/*.go"
-      - ".github/workflows/bench.yml"
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:  # Allow manual triggering
 
 permissions:
   contents: write
   pull-requests: write
 
 jobs:
-  benchzribe:
+  benchmark:
+    name: Run Benchmarks
     runs-on: ubuntu-latest
-
     steps:
-      - name: ✅ Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
         with:
-          submodules: true
-          token: ${{ secrets.GITHUB_TOKEN }}
-          ref: ${{ github.head_ref || github.ref }}
+          fetch-depth: 0
 
-      - name: 🛠 Setup Go
-        uses: actions/setup-go@v4
+      - name: Set up Go
+        uses: actions/setup-go@v5
         with:
-          go-version: 1.21
+          go-version: '1.21'
+          cache: true
 
-      - name: 🧪 Run Benchmark on Mock API
+      - name: Install dependencies
+        run: |
+          go mod download
+          go mod tidy
+          go mod verify
+
+      - name: Build benchzribe
+        run: |
+          go build -v -o benchzribe ./cmd/benchzribe
+
+      - name: Run mockapi benchmarks
         run: |
           cd mockapi
           go test ./internal/benchmarks -bench=. -benchmem > ../bench.out
           cd ..
 
-      - name: 📦 Upload bench.out for debug
-        uses: actions/upload-artifact@v4
-        with:
-          name: bench-output
-          path: bench.out
-
-      - name: 📊 Run Benchmark Action
+      - name: Store benchmark result
         uses: benchmark-action/github-action-benchmark@v1
         with:
+          name: Go Benchmark
           tool: 'go'
-          output-file-path: './bench.out'
+          output-file-path: bench.out
           github-token: ${{ secrets.GITHUB_TOKEN }}
           auto-push: true
           gh-pages-branch: 'gh-pages'
           benchmark-data-dir-path: 'dev/bench'
           alert-threshold: '200%'
+          comment-on-alert: true
           fail-on-alert: true
           alert-comment-cc-users: '@kitd3k'
+          summary-always: true
+          skip-fetch-gh-pages: false
 
-      - name: 🔍 Run benchzribe to update README
+      - name: Update README
         run: |
-          go mod tidy
-          go run cmd/benchzribe/main.go run
+          ./benchzribe run
 
-      - name: 📄 Update README with benchmark results
+      - name: Generate graph
         run: |
-          git config user.name "benchzribe-bot"
-          git config user.email "bot@benchzribe.io"
-          git add README.md
-          if git diff --staged --quiet; then
-            echo "No changes to commit"
-          else
-            git commit -m "📈 Update: Latest benchmark results"
-            if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-              git push origin HEAD:${{ github.head_ref }}
-            else
-              git push origin ${{ github.ref_name }}
-            fi
-          fi
-        continue-on-error: true
+          ./benchzribe graph
 
-      - name: 🔄 Create Pull Request Comment
-        if: failure() && github.event_name == 'pull_request'
-        uses: actions/github-script@v6
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
         with:
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: '❌ Failed to update benchmark results in README. Please check the workflow logs for details.'
-            })
+          name: benchmark-results
+          path: |
+            bench.out
+            benchmark-graph.html
+          retention-days: 90
+
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: update benchmark results [skip ci]"
+          file_pattern: "README.md benchmark-graph.html"
+          commit_user_name: "github-actions[bot]"
+          commit_user_email: "github-actions[bot]@users.noreply.github.com"
+          commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
