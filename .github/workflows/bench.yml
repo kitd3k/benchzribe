@@ -28,11 +28,18 @@ jobs:
       - name: Install dependencies
         run: |
           go mod download
+          go mod tidy
           go mod verify
 
-      - name: Run benchmark
+      - name: Build benchzribe
         run: |
-          go test -bench=. -benchmem ./... > bench.out
+          go build -v -o benchzribe ./cmd/benchzribe
+
+      - name: Run mockapi benchmarks
+        run: |
+          cd mockapi
+          go test ./internal/benchmarks -bench=. -benchmem > ../bench.out
+          cd ..
 
       - name: Store benchmark result
         uses: benchmark-action/github-action-benchmark@v1
