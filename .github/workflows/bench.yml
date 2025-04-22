@@ -18,6 +18,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Go
         uses: actions/setup-go@v5
@@ -56,6 +58,7 @@ jobs:
           fail-on-alert: true
           alert-comment-cc-users: '@kitd3k'
           summary-always: true
+          skip-fetch-gh-pages: false
 
       - name: Update README
         run: |
