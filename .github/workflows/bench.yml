@@ -7,13 +7,16 @@ on:
     paths:
       - "**/*.go"
       - ".github/workflows/bench.yml"
-
   push:
     branches:
       - main
     paths:
       - "**/*.go"
       - ".github/workflows/bench.yml"
+
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
   benchzribe:
@@ -24,6 +27,8 @@ jobs:
         uses: actions/checkout@v3
         with:
           submodules: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: ${{ github.head_ref || github.ref }}
 
       - name: 🛠 Setup Go
         uses: actions/setup-go@v4
@@ -36,16 +41,42 @@ jobs:
           go test ./internal/benchmarks -bench=. -benchmem > ../bench.out
           cd ..
 
+      - name: 📦 Upload bench.out for debug
+        uses: actions/upload-artifact@v4
+        with:
+          name: bench-output
+          path: bench.out
+
       - name: 🔍 Run benchzribe to update README
         run: |
           go mod tidy
           go run cmd/benchzribe/main.go run
 
-      - name: 📄 Commit updated README on merge (only on main branch)
-        if: github.ref == 'refs/heads/main'
+      - name: 📄 Update README with benchmark results
         run: |
           git config user.name "benchzribe-bot"
           git config user.email "bot@benchzribe.io"
-          git add -f README.md bench/ || echo "Nothing to add"
-          git commit -m "📈 update README with benchmark after merge" || echo "No changes to commit"
-          git push || echo "Nothing to push"
+          git add README.md
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "📈 Update: Latest benchmark results"
+            if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+              git push origin HEAD:${{ github.head_ref }}
+            else
+              git push origin ${{ github.ref_name }}
+            fi
+          fi
+        continue-on-error: true
+
+      - name: 🔄 Create Pull Request Comment
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '❌ Failed to update benchmark results in README. Please check the workflow logs for details.'
+            })
