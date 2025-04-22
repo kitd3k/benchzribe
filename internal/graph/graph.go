@@ -1,12 +1,10 @@
 package graph
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/go-echarts/go-echarts/v2/charts"
 	"github.com/go-echarts/go-echarts/v2/opts"
-	"github.com/kitd3k/benchzribe/internal/parser"
 )
 
 // Theme represents the graph theme
@@ -17,56 +15,48 @@ const (
 	ThemeDark  Theme = "dark"
 )
 
-// GenerateGraph creates a benchmark visualization
-func GenerateGraph(results []parser.Result, outputFile string, theme Theme) error {
-	if len(results) == 0 {
-		return fmt.Errorf("no results to graph")
-	}
-
-	// Create a new bar chart
-	bar := charts.NewBar()
-	bar.SetGlobalOptions(
+// GenerateGraph creates a line chart from benchmark data
+func GenerateGraph(data map[string][]float64) error {
+	line := charts.NewLine()
+	line.SetGlobalOptions(
 		charts.WithTitleOpts(opts.Title{
 			Title: "Benchmark Results",
-			Left:  "center",
 		}),
-		charts.WithInitializationOpts(opts.Initialization{
-			Theme: string(theme),
+		charts.WithTooltipOpts(opts.Tooltip{
+			Show:    opts.Bool(true),
+			Trigger: "axis",
 		}),
-		charts.WithTooltipOpts(opts.Tooltip{Show: true}),
-		charts.WithLegendOpts(opts.Legend{Show: true, Right: "10%"}),
+		charts.WithLegendOpts(opts.Legend{
+			Show: opts.Bool(true),
+		}),
 	)
 
-	// Prepare data
-	names := make([]string, 0, len(results))
-	nsOps := make([]opts.BarData, 0, len(results))
-	bytesOps := make([]opts.BarData, 0, len(results))
-	allocsOps := make([]opts.BarData, 0, len(results))
+	// Add X axis
+	var xAxis []string
+	for i := 0; i < len(data["ops"]); i++ {
+		xAxis = append(xAxis, "Run "+string(rune('A'+i)))
+	}
+	line.SetXAxis(xAxis)
 
-	for _, r := range results {
-		names = append(names, r.Name)
-		nsOps = append(nsOps, opts.BarData{Value: r.NsPerOp})
-		bytesOps = append(bytesOps, opts.BarData{Value: r.BytesPerOp})
-		allocsOps = append(allocsOps, opts.BarData{Value: r.AllocsPerOp})
+	// Add series
+	for name, values := range data {
+		line.AddSeries(name, generateLineItems(values))
 	}
 
-	// Add data to chart
-	bar.SetXAxis(names).
-		AddSeries("ns/op", nsOps).
-		AddSeries("B/op", bytesOps).
-		AddSeries("allocs/op", allocsOps)
-
-	// Create output file
-	f, err := os.Create(outputFile)
+	// Save the chart
+	f, err := os.Create("benchmark-graph.html")
 	if err != nil {
-		return fmt.Errorf("failed to create output file: %w", err)
+		return err
 	}
 	defer f.Close()
 
-	// Render the chart
-	if err := bar.Render(f); err != nil {
-		return fmt.Errorf("failed to render chart: %w", err)
-	}
+	return line.Render(f)
+}
 
-	return nil
+func generateLineItems(values []float64) []opts.LineData {
+	items := make([]opts.LineData, 0, len(values))
+	for _, v := range values {
+		items = append(items, opts.LineData{Value: v})
+	}
+	return items
 }

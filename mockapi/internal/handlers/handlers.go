@@ -5,6 +5,7 @@ import (
 	"net/http"
 )
 
+// TestHandler is a simple HTTP handler that performs a calculation
 func TestHandler(w http.ResponseWriter, r *http.Request) {
 	// Simulate logic
 	sum := 0
@@ -12,4 +13,4 @@ func TestHandler(w http.ResponseWriter, r *http.Request) {
 		sum += i
 	}
 	fmt.Fprintf(w, "Sum: %d", sum)
-}
+} 

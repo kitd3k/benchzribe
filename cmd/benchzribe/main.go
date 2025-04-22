@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -41,40 +42,79 @@ func validateInputFile(filename string) error {
 }
 
 func main() {
-	if err := run(); err != nil {
-		log.Printf("❌ Error: %v\n", err)
+	// Parse command line flags
+	runCmd := flag.NewFlagSet("run", flag.ExitOnError)
+	graphCmd := flag.NewFlagSet("graph", flag.ExitOnError)
+
+	if len(os.Args) < 2 {
+		fmt.Println("expected 'run' or 'graph' subcommands")
+		os.Exit(1)
+	}
+
+	switch os.Args[1] {
+	case "run":
+		runCmd.Parse(os.Args[2:])
+		if err := run(); err != nil {
+			fmt.Printf("Error: %v\n", err)
+			os.Exit(1)
+		}
+	case "graph":
+		graphCmd.Parse(os.Args[2:])
+		if err := generateGraph(); err != nil {
+			fmt.Printf("Error: %v\n", err)
+			os.Exit(1)
+		}
+	default:
+		fmt.Printf("unknown subcommand: %s\n", os.Args[1])
 		os.Exit(1)
 	}
 }
 
 func run() error {
-	if len(os.Args) < 2 {
-		printUsage()
-		return errInvalidCommand
-	}
-
-	// Load configuration
-	cfg, err := config.LoadConfig("")
+	// Read benchmark results
+	results, err := parser.Parse("bench.out")
 	if err != nil {
-		log.Printf("⚠️ Warning: using default configuration: %v\n", err)
-		cfg = config.DefaultConfig()
+		return fmt.Errorf("failed to parse benchmark results: %w", err)
 	}
 
-	cmd := os.Args[1]
-
-	switch cmd {
-	case "run":
-		return handleRun(cfg)
-	case "graph":
-		return handleGraph(cfg)
-	case "readme":
-		return handleReadme(cfg)
-	case "config":
-		return handleConfig(cfg)
-	default:
-		printUsage()
-		return fmt.Errorf("%w: %q", errInvalidCommand, cmd)
+	// Format results for README
+	var readmeContent strings.Builder
+	for _, r := range results {
+		fmt.Fprintf(&readmeContent, "### %s\n", r.Name)
+		fmt.Fprintf(&readmeContent, "- ns/op: %.2f\n", float64(r.NsPerOp))
+		fmt.Fprintf(&readmeContent, "- B/op: %.2f\n", float64(r.BytesPerOp))
+		fmt.Fprintf(&readmeContent, "- allocs/op: %.2f\n", float64(r.AllocsPerOp))
 	}
+
+	// Update README
+	if err := readme.Update("README.md", readmeContent.String()); err != nil {
+		return fmt.Errorf("failed to update README: %w", err)
+	}
+
+	return nil
+}
+
+func generateGraph() error {
+	// Read benchmark results
+	results, err := parser.Parse("bench.out")
+	if err != nil {
+		return fmt.Errorf("failed to parse benchmark results: %w", err)
+	}
+
+	// Convert results to graph data format
+	data := make(map[string][]float64)
+	for _, r := range results {
+		data["ns/op"] = append(data["ns/op"], float64(r.NsPerOp))
+		data["B/op"] = append(data["B/op"], float64(r.BytesPerOp))
+		data["allocs/op"] = append(data["allocs/op"], float64(r.AllocsPerOp))
+	}
+
+	// Generate graph
+	if err := graph.GenerateGraph(data); err != nil {
+		return fmt.Errorf("failed to generate graph: %w", err)
+	}
+
+	return nil
 }
 
 func handleRun(cfg config.Config) error {
@@ -126,7 +166,16 @@ func handleGraph(cfg config.Config) error {
 		return fmt.Errorf("failed to parse benchmark results: %w", err)
 	}
 
-	if err := graph.GenerateGraph(results, cfg.GraphOutput, graph.Theme(cfg.Theme)); err != nil {
+	// Convert results to graph data format
+	data := make(map[string][]float64)
+	for _, r := range results {
+		data["ns/op"] = append(data["ns/op"], float64(r.NsPerOp))
+		data["B/op"] = append(data["B/op"], float64(r.BytesPerOp))
+		data["allocs/op"] = append(data["allocs/op"], float64(r.AllocsPerOp))
+	}
+
+	// Generate graph
+	if err := graph.GenerateGraph(data); err != nil {
 		return fmt.Errorf("failed to generate graph: %w", err)
 	}
 
