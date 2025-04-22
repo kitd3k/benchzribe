@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1745344234778,
+  "lastUpdate": 1745345016267,
   "repoUrl": "https://github.com/kitd3k/benchzribe",
   "entries": {
     "Go Benchmark": [
@@ -260,6 +260,126 @@ window.BENCHMARK_DATA = {
             "value": 18,
             "unit": "allocs/op",
             "extra": "570076 times\n4 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "tijo1293@gmail.com",
+            "name": "Tijo Thomas",
+            "username": "tijo-thomaz"
+          },
+          "committer": {
+            "email": "tijo1293@gmail.com",
+            "name": "Tijo Thomas",
+            "username": "tijo-thomaz"
+          },
+          "distinct": true,
+          "id": "cd2a526ef4247f17a82514405de59d53c3010751",
+          "message": "fix: update benchmark workflow to handle file paths correctly",
+          "timestamp": "2025-04-22T19:02:49+01:00",
+          "tree_id": "f41ed612ed76dc6c224f60c2699ee17adf084092",
+          "url": "https://github.com/kitd3k/benchzribe/commit/cd2a526ef4247f17a82514405de59d53c3010751"
+        },
+        "date": 1745345015536,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkSimpleOperation",
+            "value": 629.4,
+            "unit": "ns/op\t       0 B/op\t       0 allocs/op",
+            "extra": "1870776 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSimpleOperation - ns/op",
+            "value": 629.4,
+            "unit": "ns/op",
+            "extra": "1870776 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSimpleOperation - B/op",
+            "value": 0,
+            "unit": "B/op",
+            "extra": "1870776 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSimpleOperation - allocs/op",
+            "value": 0,
+            "unit": "allocs/op",
+            "extra": "1870776 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkStringConcatenation",
+            "value": 6000,
+            "unit": "ns/op\t   21080 B/op\t      99 allocs/op",
+            "extra": "202368 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkStringConcatenation - ns/op",
+            "value": 6000,
+            "unit": "ns/op",
+            "extra": "202368 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkStringConcatenation - B/op",
+            "value": 21080,
+            "unit": "B/op",
+            "extra": "202368 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkStringConcatenation - allocs/op",
+            "value": 99,
+            "unit": "allocs/op",
+            "extra": "202368 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSliceOperations",
+            "value": 741.3,
+            "unit": "ns/op\t       0 B/op\t       0 allocs/op",
+            "extra": "1639172 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSliceOperations - ns/op",
+            "value": 741.3,
+            "unit": "ns/op",
+            "extra": "1639172 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSliceOperations - B/op",
+            "value": 0,
+            "unit": "B/op",
+            "extra": "1639172 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSliceOperations - allocs/op",
+            "value": 0,
+            "unit": "allocs/op",
+            "extra": "1639172 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkTestHandler",
+            "value": 2064,
+            "unit": "ns/op\t    5747 B/op\t      18 allocs/op",
+            "extra": "576712 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkTestHandler - ns/op",
+            "value": 2064,
+            "unit": "ns/op",
+            "extra": "576712 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkTestHandler - B/op",
+            "value": 5747,
+            "unit": "B/op",
+            "extra": "576712 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkTestHandler - allocs/op",
+            "value": 18,
+            "unit": "allocs/op",
+            "extra": "576712 times\n4 procs"
           }
         ]
       }
