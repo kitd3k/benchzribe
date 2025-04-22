@@ -28,6 +28,7 @@ jobs:
         with:
           submodules: true
           token: ${{ secrets.GITHUB_TOKEN }}
+          ref: ${{ github.head_ref || github.ref }}
 
       - name: 🛠 Setup Go
         uses: actions/setup-go@v4
@@ -60,7 +61,11 @@ jobs:
             echo "No changes to commit"
           else
             git commit -m "📈 Update: Latest benchmark results"
-            git push
+            if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+              git push origin HEAD:${{ github.head_ref }}
+            else
+              git push origin ${{ github.ref_name }}
+            fi
           fi
         continue-on-error: true
 
