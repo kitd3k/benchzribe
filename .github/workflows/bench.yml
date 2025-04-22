@@ -62,11 +62,11 @@ jobs:
 
       - name: Update README
         run: |
-          ./benchzribe run --input bench.out
+          ./benchzribe run
 
       - name: Generate graph
         run: |
-          ./benchzribe graph --input bench.out
+          ./benchzribe graph
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
