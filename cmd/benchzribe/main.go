@@ -71,50 +71,13 @@ func main() {
 }
 
 func run() error {
-	// Read benchmark results
-	results, err := parser.Parse("bench.out")
-	if err != nil {
-		return fmt.Errorf("failed to parse benchmark results: %w", err)
-	}
-
-	// Format results for README
-	var readmeContent strings.Builder
-	for _, r := range results {
-		fmt.Fprintf(&readmeContent, "### %s\n", r.Name)
-		fmt.Fprintf(&readmeContent, "- ns/op: %.2f\n", float64(r.NsPerOp))
-		fmt.Fprintf(&readmeContent, "- B/op: %.2f\n", float64(r.BytesPerOp))
-		fmt.Fprintf(&readmeContent, "- allocs/op: %.2f\n", float64(r.AllocsPerOp))
-	}
-
-	// Update README
-	if err := readme.Update("README.md", readmeContent.String()); err != nil {
-		return fmt.Errorf("failed to update README: %w", err)
-	}
-
-	return nil
+	cfg := config.DefaultConfig()
+	return handleRun(cfg)
 }
 
 func generateGraph() error {
-	// Read benchmark results
-	results, err := parser.Parse("bench.out")
-	if err != nil {
-		return fmt.Errorf("failed to parse benchmark results: %w", err)
-	}
-
-	// Convert results to graph data format
-	data := make(map[string][]float64)
-	for _, r := range results {
-		data["ns/op"] = append(data["ns/op"], float64(r.NsPerOp))
-		data["B/op"] = append(data["B/op"], float64(r.BytesPerOp))
-		data["allocs/op"] = append(data["allocs/op"], float64(r.AllocsPerOp))
-	}
-
-	// Generate graph
-	if err := graph.GenerateGraph(data); err != nil {
-		return fmt.Errorf("failed to generate graph: %w", err)
-	}
-
-	return nil
+	cfg := config.DefaultConfig()
+	return handleGraph(cfg)
 }
 
 func handleRun(cfg config.Config) error {

@@ -1,6 +1,7 @@
 package graph
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/go-echarts/go-echarts/v2/charts"
@@ -31,10 +32,15 @@ func GenerateGraph(data map[string][]float64) error {
 		}),
 	)
 
-	// Add X axis
+	// Add X axis - use the first data series to determine length
 	var xAxis []string
-	for i := 0; i < len(data["ops"]); i++ {
-		xAxis = append(xAxis, "Run "+string(rune('A'+i)))
+	var dataLen int
+	for _, values := range data {
+		dataLen = len(values)
+		break
+	}
+	for i := 0; i < dataLen; i++ {
+		xAxis = append(xAxis, fmt.Sprintf("Benchmark %d", i+1))
 	}
 	line.SetXAxis(xAxis)
 

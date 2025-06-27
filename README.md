@@ -6,7 +6,7 @@ A command-line tool for parsing, visualizing, and managing Go benchmark results.
 
 - 📊 Parse Go benchmark results and generate formatted tables
 - 📝 Automatically update README with benchmark results
-- 📈 Generate visualizations of benchmark data (coming soon)
+- 📈 Generate interactive visualizations of benchmark data
 - ⏱️ Track performance changes over time
 - 🔄 Easy integration with CI/CD pipelines
 
@@ -28,7 +28,7 @@ go test -bench . -benchmem ./... > bench.out
 benchzribe run
 ```
 
-3. Generate performance graphs (coming soon):
+3. Generate interactive performance graphs:
 ```bash
 benchzribe graph
 ```
@@ -36,13 +36,23 @@ benchzribe graph
 ## 📊 Benchmark Results
 
 <!-- BENCHSCRIBE:START -->
+### 📊 Benchmark Results
+
+| Benchmark | ns/op | B/op | allocs/op |
+|-----------|-------|------|------------|
+| SimpleOperation-12 | 545 | 0 | 0 |
+| StringConcatenation-12 | 9766 | 21080 | 99 |
+| SliceOperations-12 | 619 | 0 | 0 |
+| TestHandler-12 | 3351 | 6139 | 19 |
+
+_Last updated: Fri, 27 Jun 2025 02:02:30 BST_
 
 <!-- BENCHSCRIBE:END -->
 
 ## 🛠️ Commands
 
 - `benchzribe run` - Parse benchmark results and update README
-- `benchzribe graph` - Generate performance visualization (coming soon)
+- `benchzribe graph` - Generate interactive performance visualization
 - `benchzribe readme` - Manually update README section
 
 ## 🤝 Contributing
