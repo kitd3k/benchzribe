@@ -40,12 +40,14 @@ benchzribe graph
 
 | Benchmark | ns/op | B/op | allocs/op |
 |-----------|-------|------|------------|
-| SimpleOperation-4 | 630 | 0 | 0 |
-| StringConcatenation-4 | 5919 | 21080 | 99 |
-| SliceOperations-4 | 732 | 0 | 0 |
-| TestHandler-4 | 1991 | 5747 | 18 |
+| SimpleOperation-12 | 545 | 0 | 0 |
+| StringConcatenation-12 | 9766 | 21080 | 99 |
+| SliceOperations-12 | 619 | 0 | 0 |
+| TestHandler-12 | 3351 | 6139 | 19 |
 
-_Last updated: Fri, 27 Jun 2025 01:04:21 UTC_
+📈 **[View Interactive Graph](benchmark-graph.html)**
+
+_Last updated: Fri, 27 Jun 2025 02:10:26 BST_
 
 <!-- BENCHSCRIBE:END -->
 

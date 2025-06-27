@@ -105,7 +105,8 @@ func handleRun(cfg config.Config) error {
 		sb.WriteString(fmt.Sprintf("| %s | %.0f | %d | %d |\n", r.Name, r.NsPerOp, r.BytesPerOp, r.AllocsPerOp))
 	}
 
-	sb.WriteString("\n_Last updated: " + time.Now().Format(time.RFC1123) + "_\n")
+	sb.WriteString("\n📈 **[View Interactive Graph](benchmark-graph.html)**\n\n")
+	sb.WriteString("_Last updated: " + time.Now().Format(time.RFC1123) + "_\n")
 
 	if err := readme.Update(cfg.ReadmeFile, sb.String()); err != nil {
 		return fmt.Errorf("failed to update README: %w", err)

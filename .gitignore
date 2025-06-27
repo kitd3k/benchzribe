@@ -5,6 +5,8 @@
 *.exe
 *.test
 *.log
+benchzribe
+benchzribe_*
 
 # Benchscribe artifacts
 bench.out
