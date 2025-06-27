@@ -40,14 +40,46 @@ benchzribe graph
 
 | Benchmark | ns/op | B/op | allocs/op |
 |-----------|-------|------|------------|
-| SimpleOperation-4 | 628 | 0 | 0 |
-| StringConcatenation-4 | 5944 | 21080 | 99 |
-| SliceOperations-4 | 734 | 0 | 0 |
-| TestHandler-4 | 1958 | 5747 | 18 |
+| SimpleOperation-12 | 545 | 0 | 0 |
+| StringConcatenation-12 | 9766 | 21080 | 99 |
+| SliceOperations-12 | 619 | 0 | 0 |
+| TestHandler-12 | 3351 | 6139 | 19 |
 
-📈 **[View Interactive Graph](benchmark-graph.html)**
+### 📈 Performance Visualization
 
-_Last updated: Fri, 27 Jun 2025 01:11:24 UTC_
+```mermaid
+xychart-beta
+    title "Benchmark Performance (ns/op)"
+    x-axis ["SimpleOper", "StringConc", "SliceOpera", "TestHandle"]
+    y-axis "Nanoseconds per Operation"
+    line [545, 9766, 619, 3351]
+```
+
+### 📊 Performance Overview
+
+```
+Performance Overview:
+====================
+
+SimpleOperation-12        ns/op: █▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁ (545)
+                          B/op:  ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁ (0)
+                          alloc: ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁ (0)
+
+StringConcatenation-12    ns/op: ████████████████████ (9766)
+                          B/op:  ████████████████████ (21080)
+                          alloc: ████████████████████ (99)
+
+SliceOperations-12        ns/op: █▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁ (619)
+                          B/op:  ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁ (0)
+                          alloc: ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁ (0)
+
+TestHandler-12            ns/op: ██████▁▁▁▁▁▁▁▁▁▁▁▁▁▁ (3351)
+                          B/op:  █████▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁ (6139)
+                          alloc: ███▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁ (19)
+
+```
+
+_Last updated: Fri, 27 Jun 2025 02:17:21 BST_
 
 <!-- BENCHSCRIBE:END -->
 

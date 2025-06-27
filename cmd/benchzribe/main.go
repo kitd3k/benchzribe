@@ -101,12 +101,31 @@ func handleRun(cfg config.Config) error {
 	sb.WriteString("| Benchmark | ns/op | B/op | allocs/op |\n")
 	sb.WriteString("|-----------|-------|------|------------|\n")
 
+	// Collect data for graph generation
+	data := make(map[string][]float64)
+	var benchmarkNames []string
+	
 	for _, r := range results {
 		sb.WriteString(fmt.Sprintf("| %s | %.0f | %d | %d |\n", r.Name, r.NsPerOp, r.BytesPerOp, r.AllocsPerOp))
+		
+		// Collect data for embedded chart
+		data["ns/op"] = append(data["ns/op"], float64(r.NsPerOp))
+		data["B/op"] = append(data["B/op"], float64(r.BytesPerOp))
+		data["allocs/op"] = append(data["allocs/op"], float64(r.AllocsPerOp))
+		benchmarkNames = append(benchmarkNames, r.Name)
 	}
 
-	sb.WriteString("\n📈 **[View Interactive Graph](benchmark-graph.html)**\n\n")
-	sb.WriteString("_Last updated: " + time.Now().Format(time.RFC1123) + "_\n")
+	// Add embedded mermaid chart
+	sb.WriteString("\n### 📈 Performance Visualization\n\n")
+	mermaidChart := graph.GenerateMermaidChart(data, benchmarkNames)
+	sb.WriteString(mermaidChart)
+	
+	// Add text-based chart as well
+	sb.WriteString("\n### 📊 Performance Overview\n\n")
+	textChart := graph.GenerateMarkdownChart(data, benchmarkNames)
+	sb.WriteString(textChart)
+	
+	sb.WriteString("\n_Last updated: " + time.Now().Format(time.RFC1123) + "_\n")
 
 	if err := readme.Update(cfg.ReadmeFile, sb.String()); err != nil {
 		return fmt.Errorf("failed to update README: %w", err)
