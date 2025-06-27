@@ -1,4 +1,4 @@
-# 🔧 Mock API
+# 🔧 benchzribe
 
 A command-line tool for parsing, visualizing, and managing Go benchmark results. Automatically updates your README with beautifully formatted benchmark results and provides visualization options.
 
