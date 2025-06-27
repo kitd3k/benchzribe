@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1750986700418,
+  "lastUpdate": 1750987107333,
   "repoUrl": "https://github.com/kitd3k/benchzribe",
   "entries": {
     "Go Benchmark": [
@@ -620,6 +620,126 @@ window.BENCHMARK_DATA = {
             "value": 18,
             "unit": "allocs/op",
             "extra": "603561 times\n4 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "tijo1293@gmail.com",
+            "name": "tijothomas",
+            "username": "tijo-thomaz"
+          },
+          "committer": {
+            "email": "tijo1293@gmail.com",
+            "name": "tijothomas",
+            "username": "tijo-thomaz"
+          },
+          "distinct": true,
+          "id": "0c91b75a073ad15474dd1701a333d4f92eed6223",
+          "message": "feat: embed interactive graphs directly in README\n\n✅ Added Mermaid chart rendering (GitHub native support)\n✅ Added text-based performance bars with Unicode characters\n✅ Both charts now display directly in README without external files\n✅ Mermaid shows line graph of ns/op performance\n✅ Text chart shows detailed breakdown of ns/op, B/op, and allocs/op\n\nThe README now displays:\n📊 Benchmark results table\n📈 Interactive Mermaid chart (renders on GitHub)\n📊 Visual performance bars with actual values\n🕒 Timestamp of last update\n\nNo more external file dependencies for viewing graphs!",
+          "timestamp": "2025-06-27T02:17:44+01:00",
+          "tree_id": "458159618af7d2780ff769d74df4b8ca9a2b6685",
+          "url": "https://github.com/kitd3k/benchzribe/commit/0c91b75a073ad15474dd1701a333d4f92eed6223"
+        },
+        "date": 1750987107087,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkSimpleOperation",
+            "value": 628.8,
+            "unit": "ns/op\t       0 B/op\t       0 allocs/op",
+            "extra": "1911460 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSimpleOperation - ns/op",
+            "value": 628.8,
+            "unit": "ns/op",
+            "extra": "1911460 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSimpleOperation - B/op",
+            "value": 0,
+            "unit": "B/op",
+            "extra": "1911460 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSimpleOperation - allocs/op",
+            "value": 0,
+            "unit": "allocs/op",
+            "extra": "1911460 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkStringConcatenation",
+            "value": 5926,
+            "unit": "ns/op\t   21080 B/op\t      99 allocs/op",
+            "extra": "200542 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkStringConcatenation - ns/op",
+            "value": 5926,
+            "unit": "ns/op",
+            "extra": "200542 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkStringConcatenation - B/op",
+            "value": 21080,
+            "unit": "B/op",
+            "extra": "200542 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkStringConcatenation - allocs/op",
+            "value": 99,
+            "unit": "allocs/op",
+            "extra": "200542 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSliceOperations",
+            "value": 732.3,
+            "unit": "ns/op\t       0 B/op\t       0 allocs/op",
+            "extra": "1635388 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSliceOperations - ns/op",
+            "value": 732.3,
+            "unit": "ns/op",
+            "extra": "1635388 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSliceOperations - B/op",
+            "value": 0,
+            "unit": "B/op",
+            "extra": "1635388 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkSliceOperations - allocs/op",
+            "value": 0,
+            "unit": "allocs/op",
+            "extra": "1635388 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkTestHandler",
+            "value": 1961,
+            "unit": "ns/op\t    5747 B/op\t      18 allocs/op",
+            "extra": "631256 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkTestHandler - ns/op",
+            "value": 1961,
+            "unit": "ns/op",
+            "extra": "631256 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkTestHandler - B/op",
+            "value": 5747,
+            "unit": "B/op",
+            "extra": "631256 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkTestHandler - allocs/op",
+            "value": 18,
+            "unit": "allocs/op",
+            "extra": "631256 times\n4 procs"
           }
         ]
       }
