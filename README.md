@@ -40,10 +40,10 @@ benchzribe graph
 
 | Benchmark | ns/op | B/op | allocs/op |
 |-----------|-------|------|------------|
-| SimpleOperation-12 | 545 | 0 | 0 |
-| StringConcatenation-12 | 9766 | 21080 | 99 |
-| SliceOperations-12 | 619 | 0 | 0 |
-| TestHandler-12 | 3351 | 6139 | 19 |
+| SimpleOperation-4 | 628 | 0 | 0 |
+| StringConcatenation-4 | 5910 | 21080 | 99 |
+| SliceOperations-4 | 732 | 0 | 0 |
+| TestHandler-4 | 1964 | 5747 | 18 |
 
 ### 📈 Performance Visualization
 
@@ -52,7 +52,7 @@ xychart-beta
     title "Benchmark Performance (ns/op)"
     x-axis ["SimpleOper", "StringConc", "SliceOpera", "TestHandle"]
     y-axis "Nanoseconds per Operation"
-    line [545, 9766, 619, 3351]
+    line [628, 5910, 732, 1964]
 ```
 
 ### 📊 Performance Overview
@@ -61,25 +61,25 @@ xychart-beta
 Performance Overview:
 ====================
 
-SimpleOperation-12        ns/op: █▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁ (545)
+SimpleOperation-4         ns/op: ██▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁ (628)
                           B/op:  ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁ (0)
                           alloc: ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁ (0)
 
-StringConcatenation-12    ns/op: ████████████████████ (9766)
+StringConcatenation-4     ns/op: ████████████████████ (5910)
                           B/op:  ████████████████████ (21080)
                           alloc: ████████████████████ (99)
 
-SliceOperations-12        ns/op: █▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁ (619)
+SliceOperations-4         ns/op: ██▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁ (732)
                           B/op:  ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁ (0)
                           alloc: ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁ (0)
 
-TestHandler-12            ns/op: ██████▁▁▁▁▁▁▁▁▁▁▁▁▁▁ (3351)
-                          B/op:  █████▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁ (6139)
-                          alloc: ███▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁ (19)
+TestHandler-4             ns/op: ██████▁▁▁▁▁▁▁▁▁▁▁▁▁▁ (1964)
+                          B/op:  █████▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁ (5747)
+                          alloc: ███▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁ (18)
 
 ```
 
-_Last updated: Fri, 27 Jun 2025 02:17:21 BST_
+_Last updated: Fri, 27 Jun 2025 01:18:28 UTC_
 
 <!-- BENCHSCRIBE:END -->
 
